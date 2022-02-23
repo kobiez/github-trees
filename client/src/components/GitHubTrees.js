@@ -23,7 +23,7 @@ function GitHubTrees() {
 
     async function sendData() {
         try {
-            await fetch('http://localhost:8800', {
+            await fetch('http://localhost:8800/api/v1/tree', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -38,7 +38,7 @@ function GitHubTrees() {
 
     async function getData(index) {
         try {
-            const response = await fetch('http://localhost:8800')
+            const response = await fetch('http://localhost:8800/api/v1/tree')
             const data = await response.json()
             console.log(data)
             setData(data.tree[index].type)
@@ -51,8 +51,8 @@ function GitHubTrees() {
         <div>
             <h2>Find Repo</h2>
             <div>
-                <label for="user">User Name:</label>
-                <input type="text" id="user" onChange={e => userName(e.target.value)} /> <br></br> <br></br>
+                <label for="link">Enter link:</label>
+                <input type="text" id="link" onChange={e => userName(e.target.value)} /> <br></br> <br></br>
                 <label for="repo">Repo Name:</label>
                 <input type="text" id="repo" onChange={e => userRepo(e.target.value)} /> <br></br> <br></br>
                 <label for="branch">Branch Name:</label>
