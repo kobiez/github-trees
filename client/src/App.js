@@ -4,7 +4,7 @@ import GitHubTrees from './components/GitHubTrees';
 function App() {
   return (
     <div className="App">
-      <h1>GitHub Libraries</h1>
+      <h1>GitHub Trees</h1>
       <GitHubTrees />
     </div>
   );

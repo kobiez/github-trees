@@ -1,27 +1,18 @@
 import React, { useState } from "react";
+import { GoFileDirectory } from 'react-icons/go'
+import { AiFillFileText } from 'react-icons/ai'
 
 function GitHubTrees() {
-    const [userData, setUserData] = useState({
-        user: '',
-        repo: '',
-        branch: ''
-    })
 
-    const [data, setData] = useState('')
+    const [link, setLink] = useState({ url: '' })
+    const [dir, setDir] = useState([])
 
-    function userName(userNickname) {
-        setUserData({ ...userData, user: userNickname });
+    function changeLink(userLink) {
+        setLink({ ...link, url: userLink })
     }
 
-    function userRepo(repoData) {
-        setUserData({ ...userData, repo: repoData });
-    }
+    async function getData() {
 
-    function userBranch(branchData) {
-        setUserData({ ...userData, branch: branchData });
-    }
-
-    async function sendData() {
         try {
             await fetch('http://localhost:8800/api/v1/tree', {
                 method: 'POST',
@@ -29,42 +20,42 @@ function GitHubTrees() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(link)
             });
+
+            const response = await fetch('http://localhost:8800/api/v1/tree')
+            const data = await response.json()
+            setDir(data)
+
         } catch (error) {
             console.error(error);
         }
     }
 
-    async function getData(index) {
-        try {
-            const response = await fetch('http://localhost:8800/api/v1/tree')
-            const data = await response.json()
-            console.log(data)
-            setData(data.tree[index].type)
-        } catch (error) {
-            console.error(error);
+    const dirOrFile = dir.map((file) => {
+        if (file.type === 'tree') {
+            return <p><a href={file.url} target="_blank" >
+                <GoFileDirectory size={35} color="blue" />
+            </a></p>
         }
-    }
+        return <p><a href={file.url} target="_blank" >
+            <AiFillFileText size={35} color="orange" />
+        </a></p>
+    })
 
     return (
         <div>
             <h2>Find Repo</h2>
             <div>
-                <label for="link">Enter link:</label>
-                <input type="text" id="link" onChange={e => userName(e.target.value)} /> <br></br> <br></br>
-                <label for="repo">Repo Name:</label>
-                <input type="text" id="repo" onChange={e => userRepo(e.target.value)} /> <br></br> <br></br>
-                <label for="branch">Branch Name:</label>
-                <input type="text" id="branch" onChange={e => userBranch(e.target.value)} /> <br></br> <br></br>
-                <button type="button" onClick={() => sendData()} >Approve details</button>
+                <input type="text" id="link" onChange={e => changeLink(e.target.value)} placeholder="Enter link" style={{ width: '500px', height: '25px', border: 'solid black 2px' }} />
             </div>
             <br></br>
             <div>
-                <button type="button" onClick={() => getData(2)} >Search</button>
+                <button type="button" onClick={() => getData()} >Search</button>
             </div>
-            <div>
-                <p>Dir type: {data}</p>
+            <br></br>
+            <div style={{ height: '500px', width: '700px', border: 'solid black 2px', textAlign: 'left', marginLeft: '35%', overflowX: 'auto' }} >
+                {dirOrFile}
             </div>
         </div>
     )

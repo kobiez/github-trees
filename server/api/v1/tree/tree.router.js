@@ -3,20 +3,17 @@ const axios = require('axios');
 
 const router = express.Router();
 
-let user,
-    repo,
-    branch;
+let link;
 
 router.post('/', async (req, res, next) => {
-    user = await req.body.user;
-    repo = await req.body.repo;
-    branch = await req.body.branch;
-    res.send(user + repo + branch);
+    link = await req.body.url;
+
+    res.send(link);
 })
 
 router.get('/', async (req, res, next) => {
-    const response = await axios.get(`https://api.github.com/repos/${user}/${repo}/git/trees/${branch}?recursive=1`);
-    res.send(response.data);
+    const response = await axios.get(link);
+    res.send(response.data.tree);
 })
 
 module.exports = router;
