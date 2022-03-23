@@ -4,8 +4,11 @@ class GithubService {
 
         try {
             const userAndRepoName = link.url.match(/[^https:\/\/github.com].*/)
+            if (!userAndRepoName) {
+                return `Please provide valid url!!`
+            }
 
-            const response = await fetch(`http://localhost:8800/api/v1?myrepo=${userAndRepoName[0]}`)
+            const response = await fetch(`http://localhost:8800/api/v1?githubrepo=${userAndRepoName[0]}`)      
             const data = await response.json()
             return data;
 

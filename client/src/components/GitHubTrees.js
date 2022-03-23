@@ -4,29 +4,39 @@ import { AiFillFileText } from 'react-icons/ai';
 import GithubService from '../services/github/github';
 
 function GitHubTrees({ changeLink, link }) {
-    const [getData, setGetData] = useState([])
+    const [getData, setGetData] = useState([]);
 
     async function handleData() {
         const getFromServer = await GithubService.getGithubTreeFilesByUrl(link)
-        setGetData(getFromServer)
-    }
+        if (Array.isArray(getFromServer)) {
+            return setGetData(getFromServer)
+        }
+        setGetData([getFromServer])
+    };
 
-    const dirOrFile = getData.map((file) => {
+    const treeOrBlob = getData.map((file) => {
         if (file.type === 'tree') {
-            return <p>
+            return <p key={file.sha}>
                 <a href={file.url} target="_blank" >
                     <GoFileDirectory size={35} color="blue" />
+                    {file.path}
                 </a>
-                {file.path}
             </p>
         }
-        return <p>
-            <a href={file.url} target="_blank" >
-                <AiFillFileText size={35} color="orange" />
-            </a>
-            {file.path}
-        </p>
-    })
+
+        if (file.type === 'blob') {
+            return <p key={file.sha}>
+                <a href={file.url} target="_blank" >
+                    <AiFillFileText size={35} color="orange" />
+                    {file.path}
+                </a>
+            </p>
+        }
+
+            return <p key={file[0]} style={{ fontSize: '40px', fontFamily:'sans-serif' ,color:'blue' }}>
+                {file}
+            </p>
+    });
 
     return (
         <div className="Main-div">
@@ -40,10 +50,10 @@ function GitHubTrees({ changeLink, link }) {
             </div>
             <br></br>
             <div className="show-box">
-                {dirOrFile}
+                {treeOrBlob}
             </div>
         </div>
     )
-}
+};
 
 export default GitHubTrees;
